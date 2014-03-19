@@ -1,0 +1,30 @@
+<?php echo $this->doctype() ?>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>
+    <table style="background-color:#EFEFEF;padding:0px;border:1px solid #CCC;width:100%;" border="0">
+        <tr>
+            <td height="50" align="left" style="
+            background-color: #2C2C2C;
+            color:#999;
+            font-size: 20px;"><div style="padding:10px;">
+                <img border="0" align="absmiddle" style="margin:0px 5px 0px 0px; float:left;"  src="<?=$this->site_url?>/images/line_logo.png">
+                <strong>Artist</strong>Controlbox</div>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding:10px;"><?=$this->content?></td>
+        </tr>
+        <tr>
+            <td height="30" align="left" style="
+            background-color: #2C2C2C;
+            color:#999;
+            font-size: 14px;"><div style="padding:10px;">&copy; <?=date("Y")?> <strong>Artist</strong>Controlbox.com</div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

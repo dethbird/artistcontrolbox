@@ -1,0 +1,29 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        /*
+        $('#login_modal').modal({
+            show: false
+        });
+        
+        $('a').click(function(e){
+            $('#login_modal').modal('show');
+        });
+        
+        $('.well img').mouseup(function(e){
+            $('#login_modal').modal('show');
+        });
+        */
+        
+    });
+</script>
+
+<h1 class="lead">Artists:</h1>
+<div class="row">
+    <?php foreach($this->data as $artist){ ?>
+        <div class="span2 well">
+            <a href="/artists/bio/id/<?= $artist->id ?>"><?= $artist->name ?></a>
+            <img src="<?= $artist->bio_image_url ?>" class="img-rounded" />
+            <br /><?= count($artist->titles) ?> Title(s)
+        </div>
+    <?php } ?>
+</div>

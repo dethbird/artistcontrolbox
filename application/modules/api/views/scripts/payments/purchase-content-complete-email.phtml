@@ -1,0 +1,16 @@
+<h3><?= $this->payment->buyer_name ?>, thanks for your purchase!</h3>
+
+<p><strong>Purchase details:</strong></p>
+
+<p><img src="<?= $this->content->image_url ?>" style="width:450px;"/><br />
+<?= $this->payment->payment_reason ?><br />
+<?= $this->payment->currency ?> $<?= $this->payment->amount ?>
+</p>
+
+
+<p>Click here to download your purchase:<br />
+    <a href="<?=$this->site_url?>/default/payments/transaction/receipt/<?= $this->payment->transaction_id ?>-<?= $this->payment->transaction_date ?>"><?=$this->site_url?>/default/payments/transaction/receipt/<?= $this->payment->transaction_id ?>-<?= $this->payment->transaction_date ?></a>
+</p>
+
+<p>By purchasing this hi-resolution content, you are supporting more art. It is very much appreciated!<br />
+- <strong>Artist</strong>Controlbox team</p>

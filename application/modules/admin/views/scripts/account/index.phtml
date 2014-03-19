@@ -1,0 +1,77 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        CKEDITOR.replace( 'bio', {
+            width: 600
+        });
+        $('select#artist_id').change(function(){
+            console.log($(this).find("option:selected").val());
+            $('#change_form').submit();
+        });
+    });
+</script>
+<ul class="breadcrumb">
+    <li><a>Account</a> <span class="divider">></span></li>
+    <li class="active">Settings</li>
+</ul>
+
+<?php if($this->is_internal_admin==1){ ?>
+<form class="form-horizontal" id="change_form" action="/admin/account/change-artist" method="POST">
+    <div class="row">
+        <div class="control-group">
+            <label class="control-label" for="name">Internal Admin Switch User</label>
+            <div class="controls">
+                <select id="artist_id" name="artist_id">
+                    <option>Select...</option>
+                    <?php foreach($this->artists as $artist){ ?>
+                    <option value="<?=$artist->id;?>"><?=$artist->name?></option>
+                    <?php } ?>
+                </select>
+            </div>
+          </div>
+    </div>
+</form>    
+<hr />
+<?php } ?>
+<div class="row">    
+    <form class="form-horizontal" id="the_form" action="/admin/account" method="POST" enctype="multipart/form-data">
+      <div class="control-group">
+        <label class="control-label" for="name">Name</label>
+        <div class="controls">
+          <input type="text" name="name" id="name" placeholder="Name" value="<?= $this->artist->name ?>">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="bio_image_url">Bio Image URL</label>
+        <div class="controls">
+            <?php if($this->artist->bio_image_url!=""){ ?>
+                <?=$this->renderImage($this->artist->bio_image_url, 250, "img-rounded");?>
+            <?php } ?>
+          <br />
+            <input type="file" id="bio_image_url" name="bio_image_url" class="btn">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="bio">Bio</label>
+        <div class="controls">
+            <textarea name="bio" id="bio" class="input-xxlarge" rows="10"><?= $this->artist->bio  ?></textarea>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="url">URL</label>
+        <div class="controls">
+          <input type="text" name="url" id="url" placeholder="Website URL" value="<?= $this->artist->url  ?>" class="input-xxlarge">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="api_key">API Key</label>
+        <div class="controls">
+          <?= $this->artist->api_key  ?>
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          <button type="submit" class="btn btn-primary btn-large">Save</button>
+        </div>
+      </div>
+    </form>
+</div>

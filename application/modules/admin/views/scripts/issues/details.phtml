@@ -1,0 +1,65 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        CKEDITOR.replace( 'description', {
+            width: 600
+        });
+    });
+</script>
+<ul class="breadcrumb">
+    <li><a>Content</a> <span class="divider">></span></li>
+    <li><a href="/admin/titles">Titles</a><span class="divider">></span></li>
+    <li><a href="/admin/issues/index/title_id/<?=$this->issue->title_id?>"><?=$this->issue->title_name?></a><span class="divider">></span></li>
+    <li class="active">#<?= $this->issue->issue_number?>) <?=$this->issue->name?></li>
+</ul>
+<div class="row">
+    <form class="form-horizontal" id="the_form" action="/admin/issues/details/id/<?= $this->issue->id ?>/title_id/<?= $this->issue->title_id ?>" method="POST">
+      <div class="control-group">
+        <label class="control-label" for="title">Title</label>
+        <div class="controls">
+            <strong><?= $this->issue->title_name ?></strong>
+        </div>
+      </div>
+        <div class="control-group">
+        <label class="control-label" for="cover_image_url">Page One Image</label>
+        <div class="controls">
+          <img src="<?= $this->issue->page_one_image_url ?>?cache_buster=<?=$this->cache_buster?>" class="img-rounded" height="400" width="400"  /><br />
+          <small>Will only appear once you have added the first page to this issue</small>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="issue_number">Issue Number</label>
+        <div class="controls">
+            <div class="input-prepend">
+                <span class="add-on">#</span><input type="text" name="issue_number" id="issue_number" placeholder="Issue Number" value="<?= $this->issue->issue_number ?>" class="input-mini">
+            </div>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="name">Name</label>
+        <div class="controls">
+          <input type="text" name="name" id="name" placeholder="Name" value="<?= $this->issue->name ?>">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="description">Description</label>
+        <div class="controls">
+            <textarea id="description" name="description"><?= $this->page->description ?></textarea>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="status">Status</label>
+        <div class="controls">
+            <select name="status" id="status">
+                <option value="enabled" <?= $this->issue->status=="enabled"?"selected":null ?>>Enabled</option>
+                <option value="disabled" <?= $this->issue->status=="disabled"?"selected":null ?>>Disabled</option>
+            </select>
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <a href="/admin/titles" class="btn">Cancel</a>
+        </div>
+      </div>
+    </form>
+</div>

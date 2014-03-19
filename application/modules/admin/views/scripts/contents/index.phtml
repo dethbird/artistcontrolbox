@@ -1,0 +1,78 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.icon-tasks').css('cursor', 'pointer');
+        var gallery_id = $('.table').attr('data-gallery-id');
+        $('table').sortable();
+        $('table').sortable('option', { 
+            items: "tbody tr",
+            opacity : 0.7,
+            'handle' : ".icon-tasks",
+            update : function(e,ui){
+                 $.ajax({
+                    'url' : '/api/galleries/order-content',
+                    'data' :  {
+                        'id' : gallery_id,
+                        'api_key' : $('body').attr('data-api-key'),
+                        'status_in[0]' : 'enabled',
+                        'status_in[1]' : 'disabled',
+                        'sorted' : $(this).sortable('toArray', {'attribute':'data-id'})
+                    },
+                    'type' : 'post',
+                    'success' : function(data, textStatus, jqXHR){
+                        response = $.parseJSON(data);
+                    }
+                });
+
+            }
+        });
+    });
+</script>
+
+<ul class="breadcrumb">
+    <li><a>Content</a> <span class="divider">></span></li>
+    <li><a href="/admin/galleries/">Galleries</a> <span class="divider">></span></li>
+    <li><a href="/admin/galleries/details/id/<?=$this->data->id?>"><?=$this->data->name?></a> <span class="divider">></span></li>
+    <li class="active">Contents</li>
+</ul>
+
+<a class="btn btn-mini btn-success" href="/admin/contents/details/id/new/gallery_id/<?=$this->data->id?>"><i class="icon-plus icon-white"></i> New Content</a>
+
+<div class="row">
+    <table class="table table-striped" data-gallery-id="<?=$this->data->id?>">
+        <thead>
+            <tr>
+                <th>Reorder</th>
+                <th>Cover</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Buy Link</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if(count($this->data->contents)>0){ ?>
+                <?php foreach($this->data->contents as $content) { ?>
+                    <tr data-id="<?=$content->id?>">
+                        <td><i class="icon-tasks"></i></td>
+                        <td>
+                            <img src="<?=$content->image_url?>" class="img-rounded" height="100" width="100"/>
+                        </td>
+                        <td><?=$content->name?></td>
+                        <td>
+                            <?php if($content->type=="image"){ ?><i class="icon-camera"></i><?php } ?>
+                            <?php if($content->type=="audio"){ ?><i class="icon-music"></i><?php } ?>
+                            <?php if($content->type=="youtube"){ ?><i class="icon-film"></i><?php } ?>
+                            <?=$content->type?>
+                        </td>
+                        <td><?=$content->amazon_button_html?></td>
+                        <td><span class="label <?php if($content->status=='enabled'){ ?>label-success<?php } ?>"><?=$content->status?></span></td>
+                        <td>
+                            <a class="btn btn-mini btn-primary" href="/admin/contents/details/id/<?=$content->id?>">Edit</a>
+                        </td>
+                    </tr>
+                <?php } ?>
+            <?php } ?>
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,41 @@
+
+<ul class="breadcrumb">
+    <li><a>Content</a> <span class="divider">></span></li>
+    <li><a href="/admin/titles/">Titles</a> <span class="divider">></span></li>
+    <li><a href="/admin/titles/details/id/<?=$this->data->id?>"><?=$this->data->name?></a> <span class="divider">></span></li>
+    <li class="active">Issues</li>
+</ul>
+
+<a class="btn btn-mini btn-success" href="/admin/issues/details/id/new/title_id/<?=$this->data->id?>"><i class="icon-plus icon-white"></i> New Issue</a>
+
+<div class="row">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Cover</th>
+                <th>Issue #</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if(count($this->data->issues)>0){ ?>
+                <?php foreach($this->data->issues as $issue) { ?>
+                <tr>
+                    <td>
+                        <img src="<?=$issue->page_one_image_url?>" class="img-rounded" height="100" width="100"/>
+                    </td>
+                    <td>#<?=$issue->issue_number?></td>
+                    <td><?=$issue->name?><br /></td>
+                    <td><span class="label <?php if($issue->status=='enabled'){ ?>label-success<?php } ?>"><?=$issue->status?></span></td>
+                    <td>
+                        <a class="btn btn-mini btn-info" href="/admin/pages/index/issue_id/<?=$issue->id?>"><i class="icon-file icon-white"></i> Pages (<?=$issue->page_count?>)</a>
+                        <a class="btn btn-mini btn-primary" href="/admin/issues/details/id/<?=$issue->id?>">Edit</a>
+                    </td>
+                </tr>
+                <?php } ?>
+            <?php } ?>
+        </tbody>
+    </table>
+</div>

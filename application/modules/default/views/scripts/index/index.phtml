@@ -1,0 +1,101 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#submit_button").click(function(){
+            var _this = $(this);
+            $.ajax({
+                'url' : '/default/index/index',
+                'data' :  {
+                    'name' : $('#name').val(),
+                    'email' : $('#email').val(),
+                    'url' : $('#url').val(),
+                    'drawbacks' : $('#drawbacks').val(),
+                    'wishes' : $('#wishes').val()
+                },
+                'type' : 'post',
+                'beforeSend' : function(){
+                    _this.addClass('disabled');
+                    $('.control-group').removeClass('error');
+                    $('.help-inline').html('');
+                },
+                'error' : function(data, textStatus, jqXHR){
+                    response = $.parseJSON(data.responseText);
+                    for(var i in response.errors){
+                        $('label[for='+response.errors[i].field+']').parent().addClass('error');
+                        $('input[name='+response.errors[i].field+']').next().html(response.errors[i].message);
+                    }
+                },
+                'success' : function(data, textStatus, jqXHR){
+                    $("#more_info").html("<h2>Thanks!</h2><p>Your information has been submitted!</p>");
+                },
+                'complete' : function(){
+                    _this.removeClass('disabled');
+                }
+            });
+            
+            
+        });
+    });
+</script>
+
+<div class="row">
+    <div class="span11">
+		<div class="hero-unit">
+			<img src="/images/line-logo-hero.png" border="0" class="pull-left" style="margin:-30px 30px 0px 0px;">
+			<span class="heroheadlinebold">Artist</span><span class="heroheadline">Controlbox</span><br />
+			<p>Create a portfolio that is alive like your creative life should be.</p>
+			<br class="clearfix"/>
+		</div>
+    </div>
+	
+</div>
+<div class="pull-left span5 muted">
+        <h4>We heart art.</h4>
+        <p>We heart artists even more. <strong>Artist</strong>Controlbox gives you a nice portfolio / business card site that is alive with your activity in real life. Using the dashboard controlbox you will be able to focus your efforts to self-fund your passion. We offer you encouragement to be a successful working artist.</p>        <p>For more information fill out your info below and we will get back to you ASAP. Currently <strong>Artist</strong>Controlbox is in beta.</p>
+</div>
+
+<!-- MORE INFO FORM -->
+<div class="pull-left span4 offset1 well">
+    <form id="more_info">
+        <h2 class="muted">More info:</h2>
+        <small class="muted">To get started with a new artist website, please fill out this form so we can get a sense of what your needs are and we will get back to you ASAP.</small>        
+        <hr />
+        <div class="control-group">
+            <label class="control-label" for="name">Name</label>
+            <div class="controls">
+              <input type="text" id="name" name="name" placeholder="Joe Schmoe" class="input-xlarge">
+              <span class="help-inline"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="email">Email</label>
+            <div class="controls">
+              <input type="text" id="email" name="email" placeholder="joe@email.com" class="input-xlarge">
+              <span class="help-inline"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="url">Current Website</label>
+            <div class="controls">
+              <input type="text" id="url" name="url" placeholder="http://currentwebsite.com" class="input-xlarge">
+              <span class="help-inline"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="drawbacks">Website drawbacks</label>
+            <div class="controls">
+                <small class="muted">What do you dislike about your current website?</small>
+                <textarea id="drawbacks" name="drawbacks"></textarea>
+                <span class="help-inline"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="wishes">Website wishes</label>
+            <div class="controls">
+                <small class="muted">What would you like out of a new artist website?</small>
+                <textarea id="wishes" name="wishes"></textarea>
+                <span class="help-inline"></span>
+            </div>
+        </div>
+        <a class="btn btn-large btn-success" id="submit_button">Get Started!</a>
+    </form>
+</div>

@@ -1,0 +1,43 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        /*
+        $('#login_modal').modal({
+            show: false
+        });
+        
+        $('a').click(function(e){
+            $('#login_modal').modal('show');
+        });
+        
+        $('.well img').mouseup(function(e){
+            $('#login_modal').modal('show');
+        });
+        */
+        
+    });
+</script>
+
+<div class="row">
+    <div class="span4 well">
+        <h1 class="lead"><?= $this->artist->name ?></h1>
+        <img src="<?= $this->artist->bio_image_url ?>" class="img-rounded" />
+        <br />
+        <br />
+        <a href="<?= $this->artist->url ?>"><?= $this->artist->url ?></a>
+        <br />
+        <br />
+        <blockquote>
+            <?= $this->artist->bio ?>
+        </blockquote>
+    </div>
+    <div class="span5">
+        <h4>Titles:</h4><br />
+        <?php foreach($this->artist->titles as $title){ ?>
+            <div class="span2 well">
+                <a href="/titles/cover/id/<?= $title->id ?>"><?= $title->name ?></a>
+                <img src="<?= $title->cover_image_url ?>" class="img-rounded" />
+                <br /><?= $title->issue_count ?> Issue(s)
+            </div>
+        <?php } ?>
+    </div>
+</div>

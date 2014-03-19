@@ -1,0 +1,10 @@
+<h1 class="lead">Artists:</h1>
+<div class="row">
+    <?php foreach($this->data as $artist){ ?>
+        <div class="span2 well">
+            <a href="/artists/bio/id/<?=$artist->id?>"><?=$artist->name?></a>
+            <a href="/artists/bio/id/<?=$artist->id?>"><img src="<?=$artist->bio_image_url?>" class="img-rounded" /></a>
+            <br /><?= count($artist->titles) ?> Titles
+        </div>
+    <?php } ?>
+</div>

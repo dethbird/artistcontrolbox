@@ -1,0 +1,192 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        
+        $(".issue-opener").click(function(){
+            var title_id = $(this).attr('data-title-id');
+            var tr = $("#issue_holder_" + title_id);
+            if(tr.hasClass("hidden"))
+            {
+                $(this).find("i").removeClass("icon-chevron-down").addClass("icon-chevron-up");
+                tr.removeClass("hidden");
+                tr.find("td").html($("#issuesTemplate").tmpl({'id' : title_id}));
+                $.ajax({
+                    'url' : '/api/titles/',
+                    'data' :  {
+                        'id' : title_id,
+                        'api_key' : $('body').attr('data-api-key'),
+                        'status_in[0]' : 'enabled',
+                        'status_in[1]' : 'disabled'
+                    },
+                    'type' : 'get',
+                    'beforeSend' : function(){
+                        $("#title_issues_" + title_id).find("tbody").html("<img src='/images/loading.gif' />");
+                    },
+                    'success' : function(data, textStatus, jqXHR){
+                        response = $.parseJSON(data);
+                        tbody = $("#title_issues_" + title_id).find("tbody");
+                        tbody.html('');
+                        if(response[0].issues.length>0){
+                            $(response[0].issues).each(function(i, issue){
+                                tbody.append($("#issuesRow").tmpl(issue));
+                            });
+                        }
+                        
+                    }
+                });
+                
+            } else {
+                $(this).find("i").removeClass("icon-chevron-up").addClass("icon-chevron-down");
+                tr.addClass("hidden");
+            }
+        });
+        $(".page-opener").live('click', function(){
+            var issue_id = $(this).attr('data-issue-id');
+            var tr = $("#page_holder_" + issue_id);
+            if(tr.hasClass("hidden"))
+            {
+                $(this).find("i").removeClass("icon-chevron-down").addClass("icon-chevron-up");
+                tr.removeClass("hidden");
+                tr.find("td").html($("#pagesTemplate").tmpl({'id' : issue_id}));
+                $.ajax({
+                    'url' : '/api/issues/',
+                    'data' :  {
+                        'id' : issue_id,
+                        'api_key' : $('body').attr('data-api-key')
+                    },
+                    'type' : 'get',
+                    'beforeSend' : function(){
+                        $("#issue_pages_" + issue_id).find("tbody").html("<img src='/images/loading.gif' />");
+                    },
+                    'success' : function(data, textStatus, jqXHR){
+                        response = $.parseJSON(data);
+                        tbody = $("#issue_pages_" + issue_id).find("tbody");
+                        tbody.html('');
+                        if(response[0].pages.length>0){
+                            $(response[0].pages).each(function(i, page){
+                                tbody.append($("#pagesRow").tmpl(page));
+                            });
+                        }
+                        
+                    }
+                });
+                
+            } else {
+                $(this).find("i").removeClass("icon-chevron-up").addClass("icon-chevron-down");
+                tr.addClass("hidden");
+            }
+        });
+        
+        
+        $(".image-upload").each(function(){
+            $($(this).attr('id')).fileupload({
+                url : "/api/fileupload"
+            });
+        });
+        
+    });
+</script>
+<ul class="breadcrumb">
+    <li><a>Content</a> <span class="divider">></span></li>
+    <li class="active">Titles</li>
+</ul>
+
+
+<a href="/admin/titles/details/id/new" class="btn btn-mini btn-success"><i class="icon-plus icon-white"></i> New Title</a>
+
+<div class="row">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($this->data as $title){ ?>
+            <tr>
+                <td style="width:100px; height:100px;">
+                    <img src="<?= $title->cover_image_url ?>" class="img-rounded" height="100" width="100"  />
+                </td>
+                <td><?= $title->name ?> <small class="muted">(<?= $title->id ?>)</small></td>
+                <td><small><?= $title->description ?></small></td>
+                <td><span class="label<?= $title->status=="enabled"?" label-success":null ?>"><?= $title->status ?></span></td>
+                <td><a class="btn btn-mini btn-info" href="/admin/issues/index/title_id/<?= $title->id ?>"><i class="icon-book icon-white" ></i> Issues (<?= $title->issue_count ?>)</a>
+                    <a class="btn btn-mini btn-primary" href="/admin/titles/details/id/<?= $title->id ?>">Edit</a></td>
+            </tr>
+            <tr class="hidden" id="issue_holder_<?= $title->id ?>">
+                <td colspan="3" class="issue-holder" style="padding-left:100px;">pizza</td>
+            </tr>
+        <?php } ?>
+        </tbody>
+    
+    </table>
+</div>
+
+<script id="issuesTemplate" type="text/x-jquery-tmpl">
+        <a class="btn btn-mini btn-success" href="/admin/issues/details/id/new/title_id/${id}"><i class="icon-plus icon-white"></i> New Issue</a>
+        <table class="table" id="title_issues_${id}">
+            <thead>
+                <tr>
+                    <th>Cover</th>
+                    <th>Issue #</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+</script>
+
+<script id="issuesRow" type="text/x-jquery-tmpl">
+    <tr>
+        <td>
+            <img src="${page_one_image_url}" class="img-rounded" height="100" width="100"/>
+        </td>
+        <td>#${issue_number}</td>
+        <td>${name}<br /></td>
+        <td><span class="label {{if status=='enabled'}}label-success{{/if}}">${status}</span></td>
+        <td>
+            <a class="btn btn-mini btn-info page-opener" data-issue-id="${id}"><i class="icon-chevron-down icon-white"></i> ${page_count} Page(s)</a>
+            <a class="btn btn-mini btn-primary" href="/admin/issues/details/id/${id}">Edit</a>
+        </td>
+    </tr>
+    <tr class="hidden" id="page_holder_${id}">
+        <td colspan="3" class="issue-holder" style="padding-left:100px;">pizza</td>
+    </tr>
+</script>
+
+
+<script id="pagesTemplate" type="text/x-jquery-tmpl">
+    <a class="btn btn-mini btn-success" href="/admin/pages/details/id/new/issue_id/${id}"><i class="icon-plus icon-white"></i> New Page</a>
+        <table class="table" id="issue_pages_${id}">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Page #</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+</script>
+
+
+
+<script id="pagesRow" type="text/x-jquery-tmpl">
+    <tr>
+        <td>
+            <img src="${image_url}" class="img-rounded" height="100" width="100"/>
+        </td>
+        <td>#${page_number}</td>
+        <td>
+            <a class="btn btn-mini btn-primary" href="/admin/pages/details/id/${id}">Edit</a>
+        </td>
+    </tr>
+</script>
+

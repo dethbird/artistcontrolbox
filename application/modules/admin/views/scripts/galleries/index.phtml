@@ -1,0 +1,43 @@
+<ul class="breadcrumb">
+    <li><a>Content</a> <span class="divider">></span></li>
+    <li class="active">Galleries</li>
+</ul>
+
+<a href="/admin/galleries/details/id/new" class="btn btn-mini btn-success"><i class="icon-plus icon-white"></i> New Gallery</a>
+
+<div class="row">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($this->data as $gallery){ ?>
+            <tr>
+                
+                <td><?= $gallery->name ?> <small class="muted">(<?= $gallery->id ?>)</small></td>
+                <td>
+                    <?php if($gallery->type=="image"){ ?><i class="icon-camera"></i><?php } ?>
+                    <?php if($gallery->type=="audio"){ ?><i class="icon-music"></i><?php } ?>
+                    <?php if($gallery->type=="video"){ ?><i class="icon-film"></i><?php } ?>
+                    <?= $gallery->type ?>
+                </td>
+                <td><small><?= $gallery->description ?></small></td>
+                <td><span class="label<?= $gallery->status=="enabled"?" label-success":null ?>"><?= $gallery->status ?></small></td>
+                <td><a class="btn btn-mini btn-info" href="/admin/contents/index/gallery_id/<?= $gallery->id ?>"><i class="icon-folder-close icon-white"></i> Contents (<?= $gallery->content_count ?>)</a>
+                    <a class="btn btn-mini btn-primary" href="/admin/galleries/details/id/<?= $gallery->id ?>">Edit</a></td>
+            </tr>
+            <tr class="hidden" id="content_holder_<?= $gallery->id ?>">
+                <td colspan="3" class="content-holder" style="padding-left:100px;">pizza</td>
+            </tr>
+        <?php } ?>
+        </tbody>
+    
+    </table>
+</div>
+

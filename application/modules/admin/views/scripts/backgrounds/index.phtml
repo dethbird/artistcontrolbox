@@ -1,0 +1,31 @@
+<ul class="breadcrumb">
+    <li><a>Content</a> <span class="divider">></span></li>
+    <li class="active">Backgrounds</li>
+</ul>
+
+<a href="/admin/backgrounds/details/id/new" class="btn btn-mini btn-success"><i class="icon-plus icon-white"></i> New Background</a>
+
+<div class="row">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($this->data as $background){ ?>
+            <tr>
+                <td style="width:100px; height:100px;">
+                    <img src="<?= $background->image_url ?>" class="img-rounded" height="100" width="100"  />
+                </td>
+                <td><span class="label<?= $background->status=="enabled"?" label-success":null ?>"><?= $background->status ?></span></td>
+                <td>
+                    <a class="btn btn-mini btn-primary" href="/admin/backgrounds/details/id/<?= $background->id ?>">Edit</a></td>
+            </tr>
+        <?php } ?>
+        </tbody>
+    
+    </table>
+</div>

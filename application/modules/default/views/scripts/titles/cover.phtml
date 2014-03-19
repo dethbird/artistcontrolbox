@@ -1,0 +1,28 @@
+<div class="row">
+    <a href="/artists/bio/id/<?= $this->title->artist_id ?>"><?= $this->title->artist_name ?></a> > <?= $this->title->name ?>
+</div>
+<br />
+
+<div class="row">
+    <div class="span4 well">
+        <h1 class="lead"><?= $this->title->name ?></h1>
+        <img src="<?= $this->title->cover_image_url ?>" class="img-rounded" />
+        <br />
+        <br />
+        
+        <blockquote>
+            <?= $this->title->description ?>
+        </blockquote>
+    </div>
+    <div class="span5">
+        <h4>Issues:</h4><br />
+        <?php foreach ($this->title->issues as $issue) { ?>
+            <div class="span2 well">
+                <a href="/issues/view/id/<?= $issue->id ?>">Issue #<?= $issue->issue_number ?></a><br />
+                <h5><?= $issue->name ?></h5>
+                <a href="/issues/view/id/<?= $issue->id ?>"><img src="<?= $issue->page_one_image_url ?>" class="img-rounded" /></a>
+                <br /><?= $issue->page_count ?> Pages
+            </div>
+        <?php } ?>
+    </div>
+</div>

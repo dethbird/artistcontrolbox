@@ -1,0 +1,234 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        CKEDITOR.replace( 'description', {
+            width: 600
+        });
+        $("ul.nav a").click(function(){
+            $("#type").val($(this).attr('data-type'));
+        });
+        $('#youtube_check').click(function(){
+            $.ajax({
+                'url' : '/admin/contents/youtube-preview',
+                'data' :  {
+                    'youtube_link' : $('#youtube_link').val()
+                },
+                'type' : 'post',
+                'beforeSend' : function(){
+                    $('#youtube_preview').html("<img src='/images/loading.gif' />");
+                },
+                'success' : function(data, textStatus, jqXHR){
+                    $('#youtube_preview').html(data);
+                }
+            });
+        });
+        
+        $("#digital_download_container").css({'display' : 'none'});
+        $("#digital_download_toggle").click(function(){
+            if($("#digital_download_toggle i").hasClass('icon-arrow-right')){
+                $("#digital_download_toggle i").removeClass('icon-arrow-right');
+                $("#digital_download_toggle i").addClass('icon-arrow-down');
+            } else {
+                $("#digital_download_toggle i").removeClass('icon-arrow-down');
+                $("#digital_download_toggle i").addClass('icon-arrow-right');
+            }
+            $("#digital_download_container").toggle('height');
+        });
+        
+        var amazon_return_url = new ZeroClipboard( document.getElementById("amazon_return_url"), {
+            moviePath: "/swf/ZeroClipboard.swf"
+        });
+        var reference = new ZeroClipboard( document.getElementById("reference"), {
+            moviePath: "/swf/ZeroClipboard.swf"
+        });
+        var amazon_notification_url = new ZeroClipboard( document.getElementById("amazon_notification_url"), {
+            moviePath: "/swf/ZeroClipboard.swf"
+        });
+        var purchase_description_copy = new ZeroClipboard( document.getElementById("purchase_description_copy"), {
+            moviePath: "/swf/ZeroClipboard.swf"
+        });
+        var purchase_cost_copy = new ZeroClipboard( document.getElementById("purchase_cost_copy"), {
+            moviePath: "/swf/ZeroClipboard.swf"
+        });
+    });
+</script>
+<style>
+    .form-horizontal .tab-pane .controls {
+        margin-left:60px;
+    }
+</style>
+
+<ul class="breadcrumb">
+    <li><a>Content</a> <span class="divider">></span></li>
+    <li><a href="/admin/galleries">Galleries</a><span class="divider">></span></li>
+    <li><a href="/admin/contents/index/gallery_id/<?=$this->content->gallery_id?>"><?=$this->content->gallery_name?></a><span class="divider">></span></li>
+    <li class="active"><?=$this->content->name?></li>
+</ul>
+
+<a class="btn btn-mini btn-success" href="/admin/contents/details/id/new/gallery_id/<?= $this->content->gallery_id ?>"><i class="icon-plus icon-white"></i> New Content</a>
+
+<div class="row">
+    <form class="form-horizontal" id="the_form" action="/admin/contents/details/id/<?= $this->content->id ?>/gallery_id/<?= $this->content->gallery_id ?>" method="POST" enctype="multipart/form-data">
+      <div class="control-group">
+        <label class="control-label">Gallery</label>
+        <div class="controls">
+            <strong><?= $this->content->gallery_name ?></strong>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Gallery Type</label>
+        <div class="controls">
+            <strong><?= $this->content->gallery_type ?></strong>
+        </div>
+      </div>
+        
+      <div class="control-group">
+        <label class="control-label" for="title">Sort Order</label>
+        <div class="controls">
+            <div class="input-prepend">
+                <span class="add-on">#</span><input type="text" name="sort_order" id="content_number" placeholder="Sort Order" value="<?= $this->content->sort_order ?>" class="input-mini">
+            </div>
+        </div>
+      </div>
+       <div class="row offset1 clearfix"> <!-- Only required for left/right tabs -->
+        <?php if($this->content->type=="image" || $this->content->type=="youtube"){ ?>
+           <?=$this->renderImage($this->content->image_url, 400, "img-rounded"); ?>
+            <br />
+            <br />
+        <?php } ?>
+        <?php if($this->content->type=="embed_code"){ ?>
+            <?= $this->content->embed_code ?>
+        <?php } ?>
+        <?php if($this->content->type=="youtube"){ ?>
+            <?= House_Converter::youtubeLinkToEmbedCode($this->content->youtube_link, 480, 320) ?>
+        <?php } ?>
+        <ul class="nav nav-tabs">
+          <?php if($this->content->gallery_type=="image"){ ?>
+            <li <?php if($this->content->type=="image"){ ?>class="active"<?php } ?>><a href="#tab1" data-toggle="tab" data-type="image">Image</a></li>
+            <li <?php if($this->content->type=="external_url"){ ?>class="active"<?php } ?>><a href="#tab2" data-toggle="tab" data-type="external_url">External URL</a></li>
+          <?php } ?>
+          <?php if($this->content->gallery_type=="audio"){ ?>
+            <li <?php if($this->content->type=="embed_code"){ ?>class="active"<?php } ?>><a href="#tab3" data-toggle="tab" data-type="embed_code">Embed Code</a></li>
+          <?php } ?>
+          <?php if($this->content->gallery_type=="video"){ ?>
+            <li <?php if($this->content->type=="youtube"){ ?>class="active"<?php } ?>><a href="#tab4" data-toggle="tab" data-type="youtube">YouTube Link</a></li>
+          <?php } ?>
+        </ul>
+        <input type="hidden" name="type" id="type" value="<?=$this->content->type?>" />
+        <div class="tab-content">
+          <div class="tab-pane <?php if($this->content->type=="image"){ ?>active<?php } ?>" id="tab1">
+                <div class="control-group">
+                    <div class="controls">
+                        <input type="file" id="image_url" name="image_url" class="btn">
+                    </div>
+                  </div>
+            </div>
+          <div class="tab-pane <?php if($this->content->type=="external_url"){ ?>active<?php } ?>" id="tab2">
+                <div class="control-group">
+                    <div class="controls">
+                        <input type="text" name="external_url" id="external_url" placeholder="External URL"  class="input-xxlarge">
+                    </div>
+                  </div>
+          </div>
+          <div class="tab-pane <?php if($this->content->type=="embed_code"){ ?>active<?php } ?>" id="tab3">
+                <div class="control-group">
+                    <div class="controls">
+                        <textarea id="embed_code" name="embed_code" style="width:400px;" rows="6"></textarea>
+                    </div>
+                  </div>
+          </div>
+          <div class="tab-pane <?php if($this->content->type=="youtube"){ ?>active<?php } ?>" id="tab4">
+                <div class="control-group">
+                    <div class="controls">
+                        <input type="text" name="youtube_link" id="youtube_link" placeholder="YouTube Link"  class="input-xxlarge"> <a id="youtube_check" class="btn">Check</a>
+                        <div id="youtube_preview" />
+                            
+                        </div>
+                    </div>
+                  </div>
+          </div>
+        </div>
+      </div> 
+       <br class="clearfix"/>
+       <br class="clearfix"/>
+        
+      <div class="control-group">
+        <label class="control-label" for="name">Name</label>
+        <div class="controls">
+          <input type="text" name="name" id="name" placeholder="Name" value="<?= $this->content->name ?>">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="description">Description</label>
+        <div class="controls">
+            <textarea id="description" name="description"><?= $this->content->description ?></textarea>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="status">Status</label>
+        <div class="controls">
+            <select name="status" id="status">
+                <option value="enabled" <?= $this->content->status=="enabled"?"selected":null ?>>Enabled</option>
+                <option value="disabled" <?= $this->content->status=="disabled"?"selected":null ?>>Disabled</option>
+            </select>
+        </div>
+      </div>
+       <hr />
+       
+       
+       
+       <a id="digital_download_toggle" class="btn btn-success">Digital download setup <i class="icon-arrow-right icon-white"></i></a>
+       
+       <br />
+       <br />
+       
+       <div id="digital_download_container" class="row container">
+        <div class="control-group">
+          <label class="control-label" for="name">Download url</label>
+          <div class="controls">
+            <input type="text" name="purchase_download_url" id="purchase_download_url" placeholder="http://downloadurl.com/item.zip" value="<?= htmlentities($this->content->purchase_download_url, ENT_QUOTES, "UTF-8") ?>" class="input-xlarge">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="purchase_cost">Cost</label>
+          <div class="controls">
+              <div class="input-prepend">
+                  <span class="add-on">USD</span><input type="text" name="purchase_cost" id="purchase_cost" placeholder="2.00" value="<?= $this->content->purchase_cost ?>" class="input-mini"> 
+                  <a class="btn btn-mini" data-clipboard-text="<?= $this->content->purchase_cost ?>" id="purchase_cost_copy">copy</a>
+              </div>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="name">Download description</label>
+          <div class="controls">
+              <input type="text" name="purchase_description" id="purchase_description" placeholder="Digital download of &quot;<?= $this->content->name ?>&quot;" value="<?= htmlentities($this->content->purchase_description, ENT_QUOTES, "UTF-8") ?>" class="input-xxlarge"> 
+              <a class="btn btn-mini" data-clipboard-text="<?= htmlentities($this->content->purchase_description, ENT_QUOTES, "UTF-8") ?>" id="purchase_description_copy">copy</a>
+          </div>
+        </div>
+        <div class="control-group">
+          Use these values:<br />
+          <div class="offset2">
+              <strong>Reference:</strong> content-<?=$this->content->id?> <a class="btn btn-mini" data-clipboard-text="content-<?=$this->content->id?>" id="reference">copy</a><br />
+              <strong>Return URL:</strong> <?=$this->site_url?>/default/payments/amazoncomplete <a class="btn btn-mini" data-clipboard-text="<?=$this->site_url?>/default/payments/amazoncomplete" id="amazon_return_url">copy</a><br />
+              <strong>Abandon URL:</strong> <span class="muted">http://yourwebsite.com</span><br />
+              <strong>URL for Instant Payment Notification:</strong> <?=$this->site_url?>/api/payments <a class="btn btn-mini" data-clipboard-text="<?=$this->site_url?>/api/payments" id="amazon_notification_url">copy</a><br />      
+          </div>
+
+            Generate Amazon button code here: <a target="_blank" href="https://payments<?php if (APPLICATION_ENV=="development"){ ?>-sandbox<?php } ?>.amazon.com/sdui/sdui/standardbutton">https://payments<?php if (APPLICATION_ENV=="development"){ ?>-sandbox<?php } ?>.amazon.com/sdui/sdui/standardbutton</a><br />
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="amazon_button_html">Amazon Button HTML</label>
+          <div class="controls">
+              <textarea id="amazon_button_html" name="amazon_button_html" style="width:400px;" rows="5"><?= htmlentities($this->content->amazon_button_html, ENT_QUOTES, "UTF-8") ?></textarea>
+          </div>
+        </div>
+    </div>
+       
+    <hr />
+      <div class="control-group">
+        <div class="controls">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <a href="/admin/galleries" class="btn">Cancel</a>
+        </div>
+      </div>
+    </form>
+</div>

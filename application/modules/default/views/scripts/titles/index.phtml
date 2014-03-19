@@ -1,0 +1,12 @@
+<h1 class="lead">Titles:</h1>
+
+<div class="row">
+    <?php foreach ($this->data as $title){ ?>
+    <div class="span2 well">
+        <a href="titles/cover/id/<?= $title->id ?>"><?= $title->name ?></a>
+        <a href="titles/cover/id/<?= $title->id ?>"><img src="<?= $title->cover_image_url ?>" class="img-rounded" /></a>
+        <br /><?= $title->issue_count ?> Issues
+        <br /><small>by <a href="/artists/bio/id/<?=$title->artist_id?>"><?= $title->artist_name ?></a></small>
+    </div>
+    <?php } ?>
+</div>

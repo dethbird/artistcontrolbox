@@ -1,0 +1,38 @@
+<ul class="breadcrumb">
+    <li><a>Content</a> <span class="divider">></span></li>
+    <li><a href="/admin/backgrounds">Backgrounds</a> <span class="divider">></span></li>
+    <li class="active">#<?= $this->id ?></li>
+</ul>
+
+<a href="/admin/backgrounds/details/id/new" class="btn btn-mini btn-success"><i class="icon-plus icon-white"></i> New Background</a>
+<br />
+
+<div class="row">
+    <form class="form-horizontal" id="the_form" action="/admin/backgrounds/details/id/<?= $this->id ?>" method="POST" enctype="multipart/form-data">
+      <div class="control-group">
+        <label class="control-label" for="image_url">Image</label>
+        <div class="controls">
+            <?php if ($this->background->image_url!=""){ ?>
+                <?=$this->renderImage($this->background->image_url, 400, "img-rounded");?>
+            <?php } ?>
+          <br />
+            <input type="file" id="image_url" name="image_url" class="btn">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="status">Status</label>
+        <div class="controls">
+            <select name="status" id="status">
+                <option value="enabled" <?= $this->background->status=="enabled"?"selected":null ?>>Enabled</option>
+                <option value="disabled" <?= $this->background->status=="disabled"?"selected":null ?>>Disabled</option>
+            </select>
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <a href="/admin/backgrounds/" class="btn">Cancel</a>
+        </div>
+      </div>
+    </form>
+</div>

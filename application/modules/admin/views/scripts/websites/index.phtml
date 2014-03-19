@@ -1,0 +1,67 @@
+
+<ul class="breadcrumb">
+    <li><a>Website</a> <span class="divider">></span></li>
+    <li class="active">Settings</li>
+</ul>
+<div class="row">    
+    <h3>Website Settings</h3>
+    <br />
+    <form class="form-horizontal" id="the_form" action="/admin/websites/" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="id" id="id" value="<?=$this->website->id?>" />
+      <div class="control-group">
+        <label class="control-label" for="site_name">Website Name</label>
+        <div class="controls">
+          <input type="text" name="site_name" id="site_name" placeholder="Website Name" value="<?= $this->website->site_name ?>">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="title">Title</label>
+        <div class="controls">
+            <input type="text" name="title" id="title" placeholder="Title" value="<?= $this->website->title ?>" class="input-xxlarge">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="description">Description</label>
+        <div class="controls">
+            <textarea id="description" name="description"><?= $this->website->description ?></textarea>
+        </div>
+      </div>
+      <?php if($this->is_internal_admin==1) { ?>
+      <div class="control-group">
+        <label class="control-label" for="url">URL</label>
+        <div class="controls">
+          <input type="text" name="url" id="url" placeholder="http://mywebsite.com" value="<?= $this->website->url  ?>" class="input-xxlarge">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="filepath">File Path</label>
+        <div class="controls">
+          <input type="text" name="filepath" id="filepath" placeholder="/var/www/mysite/httpdocs" value="<?= $this->website->filepath  ?>" class="input-xlarge">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="dev_url">Dev URL</label>
+        <div class="controls">
+          <input type="text" name="dev_url" id="dev_url" placeholder="http://dev.mywebsite.com" value="<?= $this->website->dev_url  ?>" class="input-xxlarge">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="dev_filepath">Dev File Path</label>
+        <div class="controls">
+          <input type="text" name="dev_filepath" id="dev_filepath" placeholder="/var/www/mysite-dev/httpdocs" value="<?= $this->website->dev_filepath  ?>" class="input-xlarge">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="artist_site_repo_name">Repository Name</label>
+        <div class="controls">
+          <input type="text" name="artist_site_repo_name" id="artist_site_repo_name" placeholder="demo-artist" value="<?= $this->website->artist_site_repo_name  ?>" class="input-xlarge">
+        </div>
+      </div>
+    <?php } ?>
+      <div class="control-group">
+        <div class="controls">
+          <button type="submit" class="btn btn-primary btn-large">Save</button>
+        </div>
+      </div>
+    </form>
+</div>

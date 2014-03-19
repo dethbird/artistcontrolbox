@@ -1,0 +1,51 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        CKEDITOR.replace( 'description', {
+            width: 600
+        });
+    });
+</script>
+<ul class="breadcrumb">
+    <li><a>Content</a> <span class="divider">></span></li>
+    <li><a href="/admin/titles">Titles</a> <span class="divider">></span></li>
+    <li class="active"><?= $this->title->name ?></li>
+</ul>
+<div class="row">
+    <form class="form-horizontal" id="the_form" action="/admin/titles/details/id/<?= $this->id ?>" method="POST" enctype="multipart/form-data">
+      <div class="control-group">
+        <label class="control-label" for="cover_image_url">Cover Image</label>
+        <div class="controls">
+          <?=$this->renderImage($this->title->cover_image_url, 400, "img-rounded");?>
+          <br />
+            <input type="file" id="cover_image_url" name="cover_image_url" class="btn">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="name">Name</label>
+        <div class="controls">
+          <input type="text" name="name" id="name" placeholder="Name" value="<?= $this->title->name ?>">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="description">Description</label>
+        <div class="controls">
+            <textarea id="description" name="description"><?= $this->title->description ?></textarea>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="status">Status</label>
+        <div class="controls">
+            <select name="status" id="status">
+                <option value="enabled" <?= $this->title->status=="enabled"?"selected":null ?>>Enabled</option>
+                <option value="disabled" <?= $this->title->status=="disabled"?"selected":null ?>>Disabled</option>
+            </select>
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <a href="/admin/titles" class="btn">Cancel</a>
+        </div>
+      </div>
+    </form>
+</div>

@@ -1,0 +1,78 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.icon-tasks').css('cursor', 'pointer');
+        var issue_id = $('.table').attr('data-issue-id');
+        $('table').sortable();
+        $('table').sortable('option', { 
+            items: "tbody tr",
+            opacity : 0.7,
+            'handle' : ".icon-tasks",
+            update : function(e,ui){
+                 $.ajax({
+                    'url' : '/api/issues/order-pages',
+                    'data' :  {
+                        'id' : issue_id,
+                        'api_key' : $('body').attr('data-api-key'),
+                        'status_in[0]' : 'enabled',
+                        'status_in[1]' : 'disabled',
+                        'sorted' : $(this).sortable('toArray', {'attribute':'data-id'})
+                    },
+                    'type' : 'post',
+                    'success' : function(data, textStatus, jqXHR){
+                        response = $.parseJSON(data);
+                        
+                        for(i in response){
+                            issue = response[i]
+                            for(j in issue.pages){
+                                tr = $('tr[data-id=' + issue.pages[j].id + ']');
+                                $(tr).find('.page-number').html(issue.pages[j].page_number);
+                            }
+                        }
+                    }
+                });
+
+            }
+        });
+    });
+</script>
+
+<ul class="breadcrumb">
+    <li><a>Content</a> <span class="divider">></span></li>
+    <li><a href="/admin/titles/">Titles</a> <span class="divider">></span></li>
+    <li><a href="/admin/issues/index/title_id/<?=$this->data->title_id?>"><?=$this->data->title_name?></a> <span class="divider">></span></li>
+    <li><a href="/admin/issues/details/id/<?=$this->data->id?>">#)<?=$this->data->issue_number?> <?=$this->data->name?></a> <span class="divider">></span></li>
+    <li class="active">Pages</li>
+</ul>
+
+<a class="btn btn-mini btn-success" href="/admin/pages/details/id/new/issue_id/<?= $this->data->id ?>"><i class="icon-plus icon-white"></i> New Page</a>
+
+<div class="row">
+    <table class="table table-striped" data-issue-id="<?=$this->data->id?>">
+        <thead>
+            <tr>
+                <th>Reorder</th>
+                <th>Image</th>
+                <th>Page #</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if(count($this->data->pages)>0){ ?>
+                <?php foreach($this->data->pages as $page) { ?>
+                <tr data-id="<?=$page->id?>">
+                    <td><i class="icon-tasks"></i></td>
+                    <td>
+                        <img src="<?=$page->image_url?>" class="img-rounded" height="100" width="100"/>
+                    </td>
+                    <td>#<span class="page-number"><?=$page->page_number?></span></td>
+                    <td><?=$page->description?><br /></td>
+                    <td>
+                        <a class="btn btn-mini btn-primary" href="/admin/pages/details/id/<?=$page->id?>">Edit</a>
+                    </td>
+                </tr>
+                <?php } ?>
+            <?php } ?>
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,61 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        CKEDITOR.replace( 'description', {
+            width: 600
+        });
+    });
+</script>
+<ul class="breadcrumb">
+    <li><a>Content</a> <span class="divider">></span></li>
+    <li><a href="/admin/titles">Titles</a><span class="divider">></span></li>
+    <li><a href="/admin/titles/details/id/<?=$this->page->title_id?>"><?=$this->page->title_name?></a><span class="divider">></span></li>
+    <li><a href="/admin/pages/index/issue_id/<?=$this->page->issue_id?>">#<?=$this->page->issue_number?>) <?=$this->page->issue_name?></a><span class="divider">></span></li>
+    <li class="active">Page #<?=$this->page->page_number?> of <?=$this->page->issue_page_count?></li>
+</ul>
+<a class="btn btn-mini btn-success" href="/admin/pages/details/id/new/issue_id/<?= $this->page->issue_id ?>"><i class="icon-plus icon-white"></i> New Page</a>
+<div class="row">
+    <form class="form-horizontal" id="the_form" action="/admin/pages/details/id/<?= $this->page->id ?>/issue_id/<?= $this->page->issue_id ?>" method="POST" enctype="multipart/form-data">
+      <div class="control-group">
+        <label class="control-label" for="title">Title</label>
+        <div class="controls">
+            <strong><?= $this->page->title_name ?></strong>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="title">Issue</label>
+        <div class="controls">
+            <strong><?= $this->page->issue_name ?></strong>
+        </div>
+      </div>
+        
+      <div class="control-group">
+        <label class="control-label" for="title">Page</label>
+        <div class="controls">
+            <div class="input-prepend">
+                <span class="add-on">#</span><input type="text" name="page_number" id="page_number" placeholder="Page Number" value="<?= $this->page->page_number ?>" class="input-mini">
+            </div>
+        </div>
+      </div>
+        <div class="control-group">
+        <label class="control-label" for="image_url">Image</label>
+        <div class="controls">
+          <?=$this->renderImage($this->page->image_url, 400, "img-rounded");?>
+          <br />
+            <input type="file" id="image_url" name="image_url" class="btn">
+        </div>
+      </div>
+        
+      <div class="control-group">
+        <label class="control-label" for="description">Description</label>
+        <div class="controls">
+            <textarea id="description" name="description"><?= $this->page->description ?></textarea>
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <a href="/admin/titles" class="btn">Cancel</a>
+        </div>
+      </div>
+    </form>
+</div>

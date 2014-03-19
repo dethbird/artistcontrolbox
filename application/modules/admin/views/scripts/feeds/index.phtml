@@ -1,0 +1,41 @@
+<ul class="breadcrumb">
+    <li><a>Content</a> <span class="divider">></span></li>
+    <li class="active">Feeds</li>
+</ul>
+
+<a href="/admin/feeds/details/id/new" class="btn btn-mini btn-success"><i class="icon-plus icon-white"></i> New Feed</a>
+
+<div class="row">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Site URL</th>
+                <th>RSS URL</th>
+                <th>Item Limit</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php if (count($this->data)>0){ ?>
+        <?php foreach ($this->data as $feed){ ?>
+            <tr>
+                <td><?= $feed->id ?></td>
+                <td><?= $feed->name ?> <small class="muted">(<?= $feed->id ?>)</small></td>
+                <td><small><?= $feed->description ?></small></td>
+                <td><a href="<?= $feed->site_url ?>" target="_blank"><?= $feed->site_url ?></a></td>
+                <td><a href="<?= $feed->rss_url ?>" target="_blank"><?= $feed->rss_url ?></a></td>
+                <td><?= $feed->item_limit ?></td>
+                <td><span class="label<?= $feed->status=="enabled"?" label-success":null ?>"><?= $feed->status ?></span></td>
+                <td>
+                    <a class="btn btn-mini btn-primary" href="/admin/feeds/details/id/<?= $feed->id ?>">Edit</a></td>
+            </tr>
+        <?php } ?>
+        <?php } ?>
+        </tbody>
+    
+    </table>
+</div>

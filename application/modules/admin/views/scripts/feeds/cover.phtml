@@ -1,0 +1,43 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        /*
+        $('#login_modal').modal({
+            show: false
+        });
+        
+        $('a').click(function(e){
+            $('#login_modal').modal('show');
+        });
+        
+        $('.well img').mouseup(function(e){
+            $('#login_modal').modal('show');
+        });
+        */
+        
+    });
+</script>
+
+
+<div class="row">
+    <div class="span4 well">
+        <h1 class="lead"><?= $this->title->name ?></h1>
+        <img src="<?= $this->title->cover_image_url ?>" class="img-rounded" />
+        <br />
+        <br />
+        
+        <blockquote>
+            <?= $this->title->description ?>
+        </blockquote>
+    </div>
+    <div class="span5">
+        <h4>Issues:</h4><br />
+        <?php foreach ($this->title->issues as $issue) { ?>
+            <div class="span2 well">
+                <a href="/admin/issues/view/id/<?= $issue->id ?>">Issue #<?= $issue->issue_number ?></a><br />
+                <h5><?= $issue->name ?></h5>
+                <img src="<?= $issue->page_one_image_url ?>" class="img-rounded" />
+                <br /><?= $issue->page_count ?> Pages
+            </div>
+        <?php } ?>
+    </div>
+</div>

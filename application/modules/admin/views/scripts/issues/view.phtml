@@ -1,0 +1,38 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        if(document.location.hash!=""){
+            var arr = document.location.hash.split("-");
+            changePage(arr[1]);
+        }
+        $(".page-selector").click(function(){
+            changePage($(this).attr('data-page-number'));
+        });
+        
+    });
+    
+    function changePage(page_number){
+        var el = $("a[data-page-number=" + page_number + "]");
+        $("#current_image").attr('src', el.attr("data-image-url"));
+        
+    }
+</script>
+
+<div class="row">
+    <a href="/titles/cover/id/<?= $this->issue->title_id ?>"><?= $this->issue->title_name ?></a> > #<?= $this->issue->issue_number ?> <?= $this->issue->name ?>
+</div>
+<br />
+<div class="row">
+        
+    <div class="span12">
+        <img src="<?= $this->issue->page_one_image_url ?>" class="img-rounded" id="current_image"/>
+    </div>
+</div>
+<br />
+<div class="row">
+    <?php foreach($this->issue->pages as $page) { ?>
+        <div class="span1 well">
+            <a href="#page-<?= $page->page_number ?>" data-page-number="<?= $page->page_number ?>" class="page-selector" data-image-url="<?= $page->image_url ?>"><?= $page->page_number ?></a>
+            <img src="<?= $page->image_url ?>" class="img-rounded" />
+        </div>
+    <?php } ?>
+</div>

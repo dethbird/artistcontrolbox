@@ -1,0 +1,68 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("button[type=submit]").click(function(){
+            $.ajax({
+                'url' : '/admin/artists/auth',
+                'data' :  {
+                    'email' : $('#inputEmail').val(),
+                    'password' : $('#inputPassword').val()
+                },
+                'type' : 'post',
+                'beforeSend' : function(){
+                    $("#login_error").addClass("hidden");
+                },
+                'success' : function(data, textStatus, jqXHR){
+                    response = $.parseJSON(data);
+                    //console.log(response);
+                    if(response==null){
+                        $("#login_error").removeClass("hidden");
+                    } else {
+                        $("#login_error").addClass("hidden");
+                        $("#login_success").removeClass("hidden");
+                        if(response.last_url!=undefined){
+                            document.location = response.last_url;
+                        } else {
+                            document.location = "/admin/";
+                        }
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+<div class="row">
+    
+    <div class="alert alert-success span5 hidden" id="login_success">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Success! </strong> great job.
+    </div>
+    <div class="alert alert-error span5 hidden" id="login_error">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Error! </strong> Invalid username / password
+    </div>
+</div>    
+<div class="row">    
+    <form class="form-horizontal" onsubmit="javascript:return false;">
+  <div class="control-group">
+    <label class="control-label" for="inputEmail">Email</label>
+    <div class="controls">
+      <input type="text" id="inputEmail" placeholder="Email" class='input-xlarge'>
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="inputPassword">Password</label>
+    <div class="controls">
+      <input type="password" id="inputPassword" placeholder="Password" class='input-xlarge'>
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="controls">
+      <!--<label class="checkbox">
+        <input type="checkbox"> Remember me
+      </label>-->
+      <button type="submit" class="btn btn-primary btn-large">Sign in</button>
+    </div>
+  </div>
+</form>
+</div>

@@ -1,0 +1,73 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        CKEDITOR.replace( 'description', {
+            width: 600
+        });
+    });
+</script>
+<ul class="breadcrumb">
+    <li><a>Content</a> <span class="divider">></span></li>
+    <li><a href="/admin/feeds">Feeds</a> <span class="divider">></span></li>
+    <li class="active"><?= $this->feed->name ?></li>
+</ul>
+<a class="btn btn-mini btn-success" href="/admin/feeds/details/id/new"><i class="icon-plus icon-white"></i> New Feed</a>
+<div class="row">
+    <form class="form-horizontal" id="the_form" action="/admin/feeds/details/id/<?= $this->id ?>" method="POST" enctype="multipart/form-data">
+      <div class="control-group">
+        <label class="control-label" for="cover_image_url">Cover Image</label>
+        <div class="controls">
+            <?php if($this->feed->cover_image_url!=""){ ?>
+                <?=$this->renderImage($this->feed->cover_image_url, 400, "img-rounded");?>
+            <?php } ?>
+          <br />
+            <input type="file" id="cover_image_url" name="cover_image_url" class="btn">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="name">Name</label>
+        <div class="controls">
+          <input type="text" name="name" id="name" placeholder="Name" value="<?= $this->feed->name ?>">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="description">Description</label>
+        <div class="controls">
+            <textarea id="description" name="description"><?= $this->feed->description ?></textarea>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="site_url">Site URL</label>
+        <div class="controls">
+          <input type="text" name="site_url" id="site_url" placeholder="http://website.com" value="<?= $this->feed->site_url ?>">
+        </div>
+      </div>
+        
+      <div class="control-group">
+        <label class="control-label" for="rss_url">RSS URL</label>
+        <div class="controls">
+          <input type="text" name="rss_url" id="rss_url" placeholder="http://website.com/rss" value="<?= $this->feed->rss_url ?>">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="item_limit">Item Limit</label>
+        <div class="controls">
+          <input type="text" name="item_limit" id="item_limit" placeholder="3" value="<?= $this->feed->item_limit?$this->feed->item_limit:3 ?>">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="status">Status</label>
+        <div class="controls">
+            <select name="status" id="status">
+                <option value="enabled" <?= $this->feed->status=="enabled"?"selected":null ?>>Enabled</option>
+                <option value="disabled" <?= $this->feed->status=="disabled"?"selected":null ?>>Disabled</option>
+            </select>
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <a href="/admin/feeds" class="btn">Cancel</a>
+        </div>
+      </div>
+    </form>
+</div>

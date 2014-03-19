@@ -1,0 +1,44 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        CKEDITOR.replace( 'body', {
+            width: 600
+        });
+    });
+</script>
+<ul class="breadcrumb">
+    <li><a>Account</a> <span class="divider">></span></li>
+    <li class="active">Email</li>
+</ul>
+<div class="row">    
+    <form class="form-horizontal" id="the_form" action="/admin/email" method="POST" enctype="multipart/form-data">
+      <div class="control-group">
+        <label class="control-label" for="to">To</label>
+        <div class="controls">
+          <input type="text" name="to" id="to" placeholder="rishi.satsangi@gmail.com" class="input-xxlarge" value="<?= $this->artist->email ?>">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="from">From</label>
+        <div class="controls">
+            <input type="text" name="from" id="from" placeholder="rishi.satsangi@gmail.com" class="input-xxlarge" value="<?= $this->artist->email ?>">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="subject">Subject</label>
+        <div class="controls">
+            <input type="text" name="subject" id="subject" placeholder="Subject" class="input-xxlarge" value="Welcome to ArtistControlbox">
+        </div>
+      </div>
+    <div class="control-group">
+        <label class="control-label" for="body">Email</label>
+        <div class="controls">
+            <textarea name="body" id="body" class="input-xxlarge" rows="10"></textarea>
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          <button type="submit" class="btn btn-primary btn-large">Send</button>
+        </div>
+      </div>
+    </form>
+</div>

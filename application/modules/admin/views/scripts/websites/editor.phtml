@@ -1,0 +1,518 @@
+<style type="text/css" media="screen">
+    #editor { 
+        position: absolute;
+        top: 200px;
+        right: 0;
+        bottom: 0;
+        left: 40%;
+    }
+    .files a {
+        cursor: pointer;
+    }
+    #data pre {
+        font-size:9px;
+    }
+    #dataModal {
+        width:800px;
+    }
+</style>
+<script type="text/javascript">
+    var editor = null;
+    $(document).ready(function(){
+        $('#loading').hide();
+        editor = ace.edit("editor");
+        editor.setTheme("ace/theme/chrome");
+        editor.getSession().setTabSize(6);
+        editor.getSession().setUseWrapMode(true);
+        
+        editor.commands.addCommand({
+            name: "save",
+            bindKey: {
+                win: "Ctrl-S",
+                mac: "Command-S",
+                sender: "editor|cli"
+            },
+            exec: function() {
+                saveFile();
+            }
+        });
+        
+        
+        reloadStatus();
+        reloadAssets();
+        $('a.edit').live('click', function(){
+            $('.files tr').removeClass('info');
+            $(this).parent().parent().addClass('info');
+            selectFile($(this).attr('data-file'), $(this).attr('data-type'));
+        });
+        $('#file_info_container .btn-primary').click(function(){
+            saveFile();
+        });
+        $('#file_info_container .btn-info').click(function(){
+            revertFile();
+        });
+        $('#logs_table .revert').live('click', function(){
+            revertFile($(this).attr('data-revision'));
+        });
+        $('#commit_form .commit').live('click', function(){
+            $('#commit_form .control-group').removeClass('error');
+            if($('#msg').val()==""){
+                $('#commit_form .control-group').addClass('error');
+            } else {
+                
+                $.ajax({
+                    'url' : '/admin/websites/commit-modifications/',
+                    'type' : 'post',
+                    'data' : {
+                        'msg' : $("#msg").val()
+                    },
+                    'beforeSend' : function(){
+                        $("#status_table").find("tbody").html("<img src='/images/loading.gif' />");
+                    },
+                    'success' : function(data, textStatus, jqXHR){
+                        response = $.parseJSON(data);
+                        //console.log(response);
+                        reloadStatus();
+                    }
+                });
+            }
+            
+        });
+        $('#theme').change(function(){
+            editor.setTheme($(this).val());
+        });
+        $('.add-file').live('click', function(){
+          
+            //console.log(this);
+            //console.log($('#new_' + $(this).attr('data-type') + '_filename').val());
+            $('#new_' + $(this).attr('data-type') + '_form .control-group').removeClass('error');
+            if($('#new_' + $(this).attr('data-type') + '_filename').val()==""){
+                $('#new_' + $(this).attr('data-type') + '_form .control-group').addClass('error');
+            } else {
+                var filename = $('#new_' + $(this).attr('data-type') + '_filename').val() + "." + $(this).attr('data-type');
+                $.ajax({
+                    'url' : '/admin/websites/create-file/',
+                    'type' : 'post',
+                    'data' : {
+                        'filename' : filename,
+                        'type' : $(this).attr('data-type')
+                    },
+                    'beforeSend' : function(){
+                        $("#status_table").find("tbody").html("<img src='/images/loading.gif' />");
+                    },
+                    'success' : function(data, textStatus, jqXHR){
+                        response = $.parseJSON(data);
+                        //console.log(response);
+                        reloadStatus();
+                        reloadAssets();
+                        $('.add-file').val('');
+                    }
+                });
+            }
+        });
+        $('#btn_publish_to_production').live('click',function(){
+            $.ajax({
+                'url' : '/admin/websites/publish-to-prod/',
+                'type' : 'post',
+                'beforeSend' : function(){
+                    $('#loading').show();
+                },
+                'success' : function(data, textStatus, jqXHR){
+                    response = $.parseJSON(data);
+                    //console.log(response);
+                    reloadStatus();
+                },
+                'complete' : function(){
+                    $('#loading').hide();
+                }
+            });
+        });
+        
+        $('#btn_data').live('click', function(){
+            if($(this).attr('data-file')!=undefined){
+                $.ajax({
+                    'url' : '/admin/websites/get-file-view-data/',
+                    'type' : 'post',
+                    'data' : {
+                        'file' : $(this).attr('data-file')
+                    },
+                    'beforeSend' : function(){
+                        $('#data').html("<img src='/images/loading.gif' />");
+                        $('#page_endpoint').html("...");
+                    },
+                    'success' : function(data, textStatus, jqXHR){
+                        response = $.parseJSON(data);
+                        //console.log(response);
+                        $('#data').html("<pre>" + response.data_print + "</pre>");
+                        $('#page_endpoint').html(response.endpoint);
+                        
+                    },
+                    'complete' : function(){
+                        $('#loading').hide();
+                    }
+                });
+            }
+        });
+    });
+    
+    function reloadStatus(){
+        $.ajax({
+            'url' : '/admin/websites/get-status/',
+            'type' : 'get',
+            'beforeSend' : function(){
+                $("#status_table").find("tbody").html("<img src='/images/loading.gif' />");
+            },
+            'success' : function(data, textStatus, jqXHR){
+                response = $.parseJSON(data);
+                //console.log(response);
+                
+                //set revisions
+                
+                $("#prod_revision").html(response.prod_revision);
+                $("#dev_revision").html(response.dev_revision);
+                
+                
+                tbody = $("#status_table").find("tbody");
+                tbody.html('');
+                
+                if(response.files==undefined){
+                    $("#status_table").addClass('hidden');
+                } else {
+                    $("#status_table").removeClass('hidden');
+                }
+                
+                for(i in response.files){
+                    //console.log(response[i]);
+                    tbody.append($("#statusRow").tmpl(response.files[i]));
+                }
+                if(($("#status_table .label-info").length + $("#status_table .label-success").length) >0){
+                    $('#commit_form').removeClass('hidden');
+                } else {
+                    $('#commit_form').addClass('hidden');
+                }
+                
+                
+                
+            }
+        });
+       
+    }
+    function reloadAssets(){
+        $.ajax({
+            'url' : '/admin/websites/get-assets/',
+            'type' : 'get',
+            'beforeSend' : function(){
+                $("#templates_table").find("tbody").html("<img src='/images/loading.gif' />");
+                $("#javascript_table").find("tbody").html("<img src='/images/loading.gif' />");
+                $("#css_table").find("tbody").html("<img src='/images/loading.gif' />");
+            },
+            'success' : function(data, textStatus, jqXHR){
+                response = $.parseJSON(data);
+                tbody = $("#templates_table").find("tbody");
+                tbody.html('');
+                for(i in response.templates){
+                    //console.log(response[i]);
+                    tbody.append($("#assetsRow").tmpl(response.templates[i]));
+                }
+                tbody.find('a').attr('data-type', 'html');
+                
+                tbody = $("#javascript_table").find("tbody");
+                tbody.html('');
+                for(i in response.javascript){
+                    //console.log(response[i]);
+                    tbody.append($("#assetsRow").tmpl(response.javascript[i]));
+                }
+                tbody.find('a').attr('data-type', 'javascript');
+                
+                tbody = $("#css_table").find("tbody");
+                tbody.html('');
+                for(i in response.css){
+                    //console.log(response[i]);
+                    tbody.append($("#assetsRow").tmpl(response.css[i]));
+                }
+                tbody.find('a').attr('data-type', 'css');
+            }
+        });
+    }
+    
+    function selectFile(file, type){
+        
+        $.ajax({
+            'url' : '/admin/websites/get-file-details/',
+            'data': {
+                'file' : file
+            },
+            'type' : 'get',
+            'beforeSend' : function(){
+              $('#loading').show();
+              //editor.setValue("loading...");
+            },
+            'success' : function(data, textStatus, jqXHR){
+                response = $.parseJSON(data);
+                editor.getSession().setMode("ace/mode/" + type);
+                editor.setValue(response.contents);
+                editor.resize();
+                
+                //load logs
+                $('#file_name').html(file);
+                tbody = $("#logs_table").find("tbody");
+                tbody.html('');
+                for(i in response.log){
+                    var entry = response.log[i];
+                    tbody.append($("#vcsLogRow").tmpl(entry));
+                }
+                tbody.find('.timeago').timeago();
+                
+                //update date modified
+                var updateTimeAgo = true;
+                if($('#date_modified').html==""){
+                    updateTimeAgo = false;
+                }
+                $('#date_modified').html($.timeago(response.fileinfo.date_modified));
+                
+                
+                //set the data for this file
+                $('#btn_data').attr('data-file', file);
+            },
+            'complete' : function(){
+                $('#loading').hide();
+            }
+        });
+    }
+    
+    function saveFile(){
+        var file = $('.files tr.info a').attr('data-file');
+        var type = $('.files tr.info a').attr('data-type');
+        if(file!=undefined){
+            $.ajax({
+            'url' : '/admin/websites/save-file/',
+            'data' : {
+                'file' : file,
+                'contents' : editor.getValue()
+            },
+            'type' : 'post',
+            'beforeSend' : function(){
+              $('#loading').show();
+            },
+            'success' : function(data, textStatus, jqXHR){
+                response = $.parseJSON(data);
+                reloadStatus();
+                selectFile(file, type);
+            },
+            'complete' : function(){
+                $('#loading').hide();
+            }
+        });
+        }
+    }
+    
+    function revertFile(revision){
+        
+        var file = $('.files tr.info a').attr('data-file');
+        var type = $('.files tr.info a').attr('data-type');
+        if(file!=undefined){
+            $.ajax({
+            'url' : '/admin/websites/revert-file/',
+            'data' : {
+                'file' : file,
+                revision : revision==undefined ? '' : revision
+            },
+            'type' : 'post',
+            'beforeSend' : function(){
+              $('#loading').show();
+            },
+            'success' : function(data, textStatus, jqXHR){
+                response = $.parseJSON(data);
+                reloadStatus();
+                selectFile(file, type);
+                if(revision!=undefined){
+                    $("#myModal button.close").trigger('click');
+                }
+            },
+            'complete' : function(){
+                $('#loading').hide();
+            }
+        });
+        }
+    }
+
+</script>
+<ul class="breadcrumb">
+    <li><a>Website</a> <span class="divider">></span></li>
+    <li class="active">Editor</li>
+</ul>
+<div class="row">
+    <h3 class="pull-left">Website Editor</h3>
+    <div class="row pull-right span9" id="file_info_container">
+        <div id="loading" class="pull-left"><img src="/images/loading.gif" /></div>
+        
+        <div class="span6 pull-right">
+            <select id="theme" size="1" >
+                <option>Change editor theme...</option>
+                <optgroup label="Bright">
+                  <option value="ace/theme/chrome">Chrome</option>
+                  <option value="ace/theme/clouds">Clouds</option>
+                  <option value="ace/theme/tomorrow">Tomorrow</option>
+                </optgroup>
+                <optgroup label="Dark">
+                  <option value="ace/theme/clouds_midnight">Clouds Midnight</option>
+                  <option value="ace/theme/merbivore_soft">Merbivore Soft</option>
+                  <option value="ace/theme/monokai">Monokai</option>
+                  <option value="ace/theme/tomorrow_night">Tomorrow Night</option>
+                  <option value="ace/theme/tomorrow_night_blue">Tomorrow Night Blue</option>
+                  <option value="ace/theme/tomorrow_night_bright">Tomorrow Night Bright</option>
+                  <option value="ace/theme/tomorrow_night_eighties">Tomorrow Night 80s</option>
+                </optgroup>
+              </select>
+            <a class="btn btn-success" role="button" href="#dataModal" data-toggle="modal" title="show the data available for this page" id="btn_data">Data</a>
+            <a class="btn btn-inverse" role="button" href="#myModal" data-toggle="modal" title="show the revision history for this file">History</a>
+            <a class="btn btn-info" title="revert this file to the last revision number in version history">Revert</a>
+            <a class="btn btn-primary" title="save this file">Save</a>
+            <br />
+            <small class="time muted"><span class="time-label">Last Modified:</span> <time id="date_modified" datetime=""></time></small>
+        </div>
+    </div>
+</div>
+<div class="row span4 pull-left">    
+    <div class="span3">
+        <h4>File Status:</h4>
+        <table class="table" id="status_table">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>File</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <div id="commit_form" class="hidden row">
+            <div class="control-group">
+                <label class="control-label muted small" for="msg"><small>Short description about modifications:</small></label>
+                <div class="controls">
+                  <input type="text" name="msg" id="msg" placeholder="Updated the layout"><br />
+                  <a class="btn btn-success commit btn-mini offset1">Commit modifications</a>
+                </div>
+              </div>
+        </div>
+            <div id="push_to_production" class="row">
+            <div class="control-group">
+                <label class="control-label muted small" for="msg"><small><a href="<?=$this->website->url?>" title="Open Production website in new window" target="_blank">Production</a>: revision <span id="prod_revision">0</span> <br /> <a href="<?=$this->website->dev_url?>" title="Open Dev website in new window" target="_blank">Dev</a>: revision <span id="dev_revision">0</span></small></label>
+                <div class="controls">
+                  <a class="btn btn-primary btn-mini offset1" id="btn_publish_to_production">Publish to production</a>
+                </div>
+              </div>
+        </div>
+    </div>
+    <div class="span3 files">
+        <h4>Templates:</h4>
+        <table class="table table-striped" id="templates_table">
+            <tbody>
+            </tbody>
+        </table><br />
+        <?php if($this->is_internal_admin==1) { ?>
+            <div id="new_html_form">
+                <div class="control-group">
+                    <!--<label class="control-label muted small" for="msg"><small>Short description about modifications:</small></label>-->
+                    <div class="controls input-append">
+                      <input type="text" placeholder="filename" name="new_html_filename" id="new_html_filename"/><span class="add-on">.html</span><br />
+                    </div>
+                    <a class="btn btn-mini btn-primary add-file offset1" data-type="html">Add html file</a><br />
+                </div>
+            </div>
+        <?php } ?>
+    </div>
+    <div class="span3 files">
+        <h4>JavaScript:</h4>
+        <table class="table" id="javascript_table">
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <div class="span3 files">
+        <h4>CSS:</h4>
+        <table class="table " id="css_table">
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row span7 pull-left">
+    <div id="editor" class="row">select a file to start editing</div>
+</div>
+
+<script id="statusRow" type="text/x-jquery-tmpl">
+    <tr>
+        <td>
+            <span class="label 
+                  {{if status=='M'}}label-info{{/if}}
+                  {{if status=='A'}}label-info{{/if}}
+                  {{if status=='?'}}label-success{{/if}}
+            "
+            title="{{if status=='M'}}modified{{/if}}{{if status=='?'}}new{{/if}}{{if status=='A'}}added{{/if}}"
+            > {{if status=='M'}}mod{{/if}}{{if status=='?'}}new{{/if}}{{if status=='A'}}new{{/if}}</span>
+        </td>
+        <td>${file}</td>
+    </tr>
+</script>
+
+<script id="assetsRow" type="text/x-jquery-tmpl">
+    <tr>
+        <td><a data-file="${file}" class="edit">${file}</a></td>
+    </tr>
+</script>
+
+<script id="vcsLogRow" type="text/x-jquery-tmpl">
+    <tr>
+        <td>
+            ${revision}
+        </td>
+        <td>
+            <a data-revision="${revision}" class="edit">${msg}</a>
+            <br /><time datetime="${date}" class="timeago">${date}</time>
+        </td>
+        <td>
+            <a class="btn btn-info btn-mini revert" data-revision="${revision}">Revert</a>
+        </td>
+    </tr>
+</script>
+
+<div class="modal hide fade" id="myModal" role="dialog" >
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>History for: <span id="file_name"></span></h3>
+  </div>
+  <div class="modal-body">
+      <div id="logs" class="span3 pull-left offset1">
+            <table class="table" id="logs_table">
+                <thead>
+                    <tr>
+                        <th>Revision</th>
+                        <th>Message</th>
+                        <th>Revert</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+  </div>
+  <div class="modal-footer">
+    <a class="btn" data-dismiss="modal" >Close</a>
+  </div>
+</div>
+
+<div class="modal hide fade" id="dataModal" role="dialog" >
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Data for page: /<span id="page_endpoint"></span></h3>
+  </div>
+  <div class="modal-body">
+        <div id="data">
+          
+        </div>
+  </div>
+  <div class="modal-footer">
+    <a class="btn" data-dismiss="modal" >Close</a>
+  </div>
+</div>

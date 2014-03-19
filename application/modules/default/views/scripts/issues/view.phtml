@@ -1,0 +1,41 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        if(document.location.hash!=""){
+            var arr = document.location.hash.split("-");
+            changePage(arr[1]);
+        }
+        $(".page-selector").click(function(){
+            changePage($(this).attr('data-page-number'));
+        });
+        
+    });
+    
+    function changePage(page_number){
+        $(".page-selector").removeClass('btn-primary');
+        var el = $("div[data-page-number=" + page_number + "]");
+        document.location.hash = "page-" + page_number;
+        $("#current_image").attr('src', el.attr("data-image-url"));
+        el.addClass('btn-primary');
+        
+    }
+</script>
+
+<div class="row">
+    <a href="/artists/bio/id/<?= $this->issue->artist_id ?>"><?= $this->issue->artist_name ?></a> > <a href="/titles/cover/id/<?= $this->issue->title_id ?>"><?= $this->issue->title_name ?></a> > #<?= $this->issue->issue_number ?> <?= $this->issue->name ?>
+</div>
+<br />
+<div class="row">
+        
+    <div class="span12">
+        <img src="<?= $this->issue->page_one_image_url ?>?cache_buster=<?=$this->cache_buster?>" class="img-rounded" id="current_image"/>
+    </div>
+</div>
+<br />
+<div class="row">
+    <?php foreach($this->issue->pages as $i=>$page) { ?>
+        <div class="span1 well page-selector btn <?php echo $i==0 ? "btn-primary" : null ?>" data-page-number="<?= $page->page_number ?>" data-image-url="<?= $page->image_url ?>">
+            <a href="#page-<?= $page->page_number ?>" class="page-number"><?= $page->page_number ?></a>
+            <img src="<?= $page->image_url ?>" class="img-rounded" />
+        </div>
+    <?php } ?>
+</div>

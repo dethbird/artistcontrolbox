@@ -1,0 +1,17 @@
+
+<div class="row">
+    <div class="span11">
+        <h2>Transaction Details:</h2>
+        <!--<pre><?=print_r($this->payment,1)?></pre>
+        <pre><?=print_r($this->content,1)?></pre>-->
+        <h5>Item: </h5> <?=$this->payment->payment_reason?> by <?=$this->payment->recipient_name?><br />
+        <img src="<?=$this->content->image_url?>" class="img-rounded" style="width:350px;"/>
+        <h5>Payment: </h5> <?=$this->payment->currency?> $<?=$this->payment->amount?>, <?=$this->payment->payment_method?><br />
+        <h5>Date: </h5> <?=$this->payment->date_added->format("F j, Y g:i a")?><br />
+        <h5>Patron name: </h5> <?=$this->payment->buyer_name?><br />
+        <h5>Transaction id: </h5> <?=$this->payment->transaction_id?><br />
+        <br />
+        <a href="<?=$this->site_url?>/api/payments/download/receipt/<?= $this->payment->transaction_id ?>-<?= $this->payment->transaction_date ?>" class="btn btn-primary btn-large">Download!</a><br />
+    </div>
+	
+</div>
