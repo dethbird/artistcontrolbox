@@ -124,6 +124,7 @@ class Api_WebsitesController extends House_Controller_Api_Base
         $website->publish_json = json_encode($response);
         $website->save();
         
+        echo "{status:'ok'}";
 
     }
     

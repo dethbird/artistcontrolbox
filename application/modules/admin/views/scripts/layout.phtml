@@ -16,6 +16,22 @@
         $(document).ajaxError(function(event, request, settings){
             console.log(event);
          });
+        $(document).ready(function(){
+            $('#btn_publish_content').on('click', function(){
+              console.log("here");
+              $.ajax({
+                    'url' : '/api/websites/publish',
+                    'data' :  {
+                        'api_key' : $('body').attr('data-api-key'),
+                    },
+                    'type' : 'post',
+                    'success' : function(data, textStatus, jqXHR){
+                        response = $.parseJSON(data);
+                        console.log("published");
+                    }
+                });
+            });
+         });
     </script>
     <!-- Le styles -->
     <link href="/css/bootstrap.css" rel="stylesheet">
@@ -77,7 +93,7 @@
                   </div>
                 </li>
                 
-                
+                <!--
                 <li <?php if($this->controller=="websites"){?>class="active"<?php } ?>>
                 <div class="btn-group">
                     <a class="btn dropdown-toggle btn-inverse" data-toggle="dropdown" href="#">
@@ -89,6 +105,12 @@
                         <li <?php if($this->controller=="websites" && $this->action=="editor"){?>class="active"<?php } ?>><a href="/admin/websites/editor">Editor</a></li>
                     </ul>
                   </div>
+                </li>
+              -->
+                <li>
+                  <div class="btn-group">
+                    <a class="btn btn-primary" id="btn_publish_content" href="#">Publish Content</a>
+                  </a>
                 </li>
                 
                 
