@@ -72,6 +72,20 @@ class Api_GalleriesController extends House_Controller_Api_Base
       
     }
 
+    public function orderAction(){
+        if(count($this->_getParam('sorted'))>0){
+            foreach($this->_getParam('sorted') as $i=>$id){
+                $gallery = Gallery::find($id);
+                if($gallery->id){
+                    $gallery->sort_order = $i+1;
+                    $gallery->save();
+                }
+            }
+        }
+        $this->indexAction();
+        
+    }
+
     public function orderContentAction(){
         if(count($this->_getParam('sorted'))>0){
             foreach($this->_getParam('sorted') as $i=>$id){

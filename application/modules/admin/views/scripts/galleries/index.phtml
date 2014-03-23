@@ -1,3 +1,31 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.icon-tasks').css('cursor', 'pointer');
+        $('table').sortable();
+        $('table').sortable('option', { 
+            items: "tbody tr",
+            opacity : 0.7,
+            'handle' : ".icon-tasks",
+            update : function(e,ui){
+                 $.ajax({
+                    'url' : '/api/galleries/order',
+                    'data' :  {
+                        'api_key' : $('body').attr('data-api-key'),
+                        'status_in[0]' : 'enabled',
+                        'status_in[1]' : 'disabled',
+                        'sorted' : $(this).sortable('toArray', {'attribute':'data-id'})
+                    },
+                    'type' : 'post',
+                    'success' : function(data, textStatus, jqXHR){
+                        response = $.parseJSON(data);
+                    }
+                });
+
+            }
+        });
+    });
+</script>
+
 <ul class="breadcrumb">
     <li><a>Content</a> <span class="divider">></span></li>
     <li class="active">Galleries</li>
@@ -9,6 +37,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>Reorder</th>
                 <th>Name</th>
                 <th>Type</th>
                 <th>Description</th>
@@ -18,8 +47,8 @@
         </thead>
         <tbody>
         <?php foreach ($this->data as $gallery){ ?>
-            <tr>
-                
+            <tr data-id="<?=$gallery->id?>">
+                <td><i class="icon-tasks"></i></td>
                 <td><?= $gallery->name ?> <small class="muted">(<?= $gallery->id ?>)</small></td>
                 <td>
                     <?php if($gallery->type=="image"){ ?><i class="icon-camera"></i><?php } ?>
@@ -31,9 +60,6 @@
                 <td><span class="label<?= $gallery->status=="enabled"?" label-success":null ?>"><?= $gallery->status ?></small></td>
                 <td><a class="btn btn-mini btn-info" href="/admin/contents/index/gallery_id/<?= $gallery->id ?>"><i class="icon-folder-close icon-white"></i> Contents (<?= $gallery->content_count ?>)</a>
                     <a class="btn btn-mini btn-primary" href="/admin/galleries/details/id/<?= $gallery->id ?>">Edit</a></td>
-            </tr>
-            <tr class="hidden" id="content_holder_<?= $gallery->id ?>">
-                <td colspan="3" class="content-holder" style="padding-left:100px;">pizza</td>
             </tr>
         <?php } ?>
         </tbody>
