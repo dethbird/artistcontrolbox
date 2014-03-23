@@ -23,9 +23,10 @@ class Admin_IssuesController extends House_Controller_Admin_Base
     
     public function detailsAction(){
         
+        $artist = House_Session::getArtist();
+        
         if($this->getRequest()->isPost()){
             $params = $this->_getAllParams();
-            $artist = House_Session::getArtist();
             $params['api_key'] = $artist->api_key;
             $params['title_id'] = $this->_getParam('title_id');
             $params['status_in'] = array("enabled", "disabled");
@@ -44,7 +45,6 @@ class Admin_IssuesController extends House_Controller_Admin_Base
         }
         $client = new House_Http_Client();
         $response = $client->httpGet($this->view->site_url."/api/issues", array("api_key"=>$artist->api_key, "id"=>$this->_getParam("id"), "status_in"=>array("enabled", "disabled")));
-        //House_Log::log(json_decode($response));
         $this->view->data = json_decode($response);
         $this->view->issue = $this->view->data[0];
         
@@ -54,7 +54,7 @@ class Admin_IssuesController extends House_Controller_Admin_Base
             } else {
                 //fetch the title name
                 $client = new House_Http_Client();
-                $response = $client->httpGet($this->view->site_url."/api/titles", array("id"=>$this->_getParam("title_id"), "status_in"=>array("enabled", "disabled")));
+                $response = $client->httpGet($this->view->site_url."/api/titles", array("api_key"=>$artist->api_key, "id"=>$this->_getParam("title_id"), "status_in"=>array("enabled", "disabled")));
                 $title = json_decode($response);
                 $title = $title[0];
                 $this->view->issue->id = "new";

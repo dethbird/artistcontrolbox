@@ -24,9 +24,10 @@ class Admin_PagesController extends House_Controller_Admin_Base
     
     public function detailsAction(){
         
+        $artist = House_Session::getArtist();
+        
         if($this->getRequest()->isPost()){
             $params = $this->_getAllParams();
-            $artist = House_Session::getArtist();
             $params['api_key'] = $artist->api_key;
             $params['issue_id'] = $this->_getParam('issue_id');
             //House_Log::log($params);
@@ -92,7 +93,7 @@ class Admin_PagesController extends House_Controller_Admin_Base
         }
         
         $client = new House_Http_Client();
-        $response = $client->httpGet($this->view->site_url."/api/pages", array("id"=>$this->_getParam("id")));
+        $response = $client->httpGet($this->view->site_url."/api/pages", array("api_key"=>$artist->api_key, "id"=>$this->_getParam("id")));
         //House_Log::log(json_decode($response));
         $this->view->data = json_decode($response);
         $this->view->page = $this->view->data[0];
@@ -103,7 +104,7 @@ class Admin_PagesController extends House_Controller_Admin_Base
             } else {
                 //fetch the title name
                 $client = new House_Http_Client();
-                $response = $client->httpGet($this->view->site_url."/api/issues", array("id"=>$this->_getParam("issue_id")));
+                $response = $client->httpGet($this->view->site_url."/api/issues", array("api_key"=>$artist->api_key, "id"=>$this->_getParam("issue_id")));
                 $issue = json_decode($response);
                 $issue = $issue[0];
                 $this->view->page->id = "new";

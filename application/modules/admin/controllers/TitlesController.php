@@ -36,21 +36,17 @@ class Admin_TitlesController extends House_Controller_Admin_Base
     }
     
     public function detailsAction(){
-        //echo "<pre>".print_r($_REQUEST,1)."</pre>";
-        //echo "<pre>".print_r($_FILES,1)."</pre>";
+        
+        $artist = House_Session::getArtist();
         
         if($this->getRequest()->isPost()){
             $params = $this->_getAllParams();
-            $artist = House_Session::getArtist();
             $params['api_key'] = $artist->api_key;
             $params['status_in'] = array("enabled", "disabled");
-            //House_Log::log($artist);
-            //House_Log::log($params);
+
             $client = new House_Http_Client();
             $response = json_decode($client->httpPost($this->view->site_url."/api/titles", $params));
-            //House_Log::log(__FUNCTION__);
-            //House_Log::log($response);
-            //House_Log::log($client);
+
             
             //if errors, return that json through flash messenger
             if(count($response->errors)>0){
@@ -114,7 +110,7 @@ class Admin_TitlesController extends House_Controller_Admin_Base
         $this->view->id = $this->_getParam('id');
         if(is_numeric($this->_getParam('id'))){
             $client = new House_Http_Client();
-            $response = $client->httpGet($this->view->site_url."/api/titles", array("id"=>$this->_getParam("id"), "status_in"=>array("enabled", "disabled")));
+            $response = $client->httpGet($this->view->site_url."/api/titles", array("api_key"=>$artist->api_key, "id"=>$this->_getParam("id"), "status_in"=>array("enabled", "disabled")));
             $this->view->data = json_decode($response);
             $this->view->title = $this->view->data[0];
         }
