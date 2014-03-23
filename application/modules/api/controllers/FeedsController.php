@@ -56,6 +56,9 @@ class Api_FeedsController extends House_Controller_Api_Base
             if(array_key_exists('name', $_POST)!==false){
                 $feed->name = $this->_getParam('name');
             }
+            if($this->artist->id!==false){
+                $feed->artist_id = $this->artist->id;
+            }
             if(array_key_exists('description', $_POST)){
                 $feed->description = $this->_getParam('description');
             }

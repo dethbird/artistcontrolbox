@@ -36,12 +36,11 @@ class Admin_FeedsController extends House_Controller_Admin_Base
     }
     
     public function detailsAction(){
-        //echo "<pre>".print_r($_REQUEST,1)."</pre>";
-        //echo "<pre>".print_r($_FILES,1)."</pre>";
+    
+        $artist = House_Session::getArtist();
         
         if($this->getRequest()->isPost()){
             $params = $this->_getAllParams();
-            $artist = House_Session::getArtist();
             $params['api_key'] = $artist->api_key;
             $params['status_in'] = array("enabled", "disabled");
             //House_Log::log($artist);
@@ -114,7 +113,7 @@ class Admin_FeedsController extends House_Controller_Admin_Base
         $this->view->id = $this->_getParam('id');
         if(is_numeric($this->_getParam('id'))){
             $client = new House_Http_Client();
-            $response = $client->httpGet($this->view->site_url."/api/feeds", array("id"=>$this->_getParam("id"), "status_in"=>array("enabled", "disabled")));
+            $response = $client->httpGet($this->view->site_url."/api/feeds", array("api_key"=>$artist->api_key, "id"=>$this->_getParam("id"), "status_in"=>array("enabled", "disabled")));
             $this->view->data = json_decode($response);
             $this->view->feed = $this->view->data[0];
         }
