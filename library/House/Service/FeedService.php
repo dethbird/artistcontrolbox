@@ -28,7 +28,7 @@ class House_Service_FeedService  {
             AND `feeds`.`artist_id` = ".$this->artist->id."
             ".(is_array($status_in)?" AND `feeds`.`status` IN ('".implode("', '", $status_in)."')":" AND `feeds`.`status` = 'enabled'")."
             GROUP BY `feeds`.`id`
-            ORDER BY TRIM(UPPER(`feeds`.`name`)) ASC
+            ORDER BY `feeds`.`sort_order` ASC
         ");
         //Load Post Previews
         $response = array();

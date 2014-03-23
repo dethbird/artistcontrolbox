@@ -82,7 +82,6 @@ class Api_GalleriesController extends House_Controller_Api_Base
                 }
             }
         }
-        $this->indexAction();
         
     }
 
@@ -96,7 +95,6 @@ class Api_GalleriesController extends House_Controller_Api_Base
                 }
             }
         }
-        $this->indexAction();
         
     }
 }

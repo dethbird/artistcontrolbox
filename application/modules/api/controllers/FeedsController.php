@@ -74,11 +74,8 @@ class Api_FeedsController extends House_Controller_Api_Base
             if(array_key_exists('rss_url', $_POST)){
                 $feed->rss_url = $this->_getParam('rss_url');
             }
-            $feed->artist_id = $this->_getParam('artist_id');
             $feed->save();
             $this->_setParam('id', $feed->id);
-            
-            //House_Log::log($feed);
         }
         
         $service = new House_Service_FeedService($this->artist);
@@ -88,7 +85,18 @@ class Api_FeedsController extends House_Controller_Api_Base
       
     }
     
-    
+    public function orderAction(){
+        if(count($this->_getParam('sorted'))>0){
+            foreach($this->_getParam('sorted') as $i=>$id){
+                $feed = Feed::find($id);
+                if($feed->id){
+                    $feed->sort_order = $i+1;
+                    $feed->save();
+                }
+            }
+        }
+        
+    }
 
 
 }

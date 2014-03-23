@@ -1,3 +1,31 @@
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.icon-tasks').css('cursor', 'pointer');
+        $('table').sortable();
+        $('table').sortable('option', { 
+            items: "tbody tr",
+            opacity : 0.7,
+            'handle' : ".icon-tasks",
+            update : function(e,ui){
+                 $.ajax({
+                    'url' : '/api/feeds/order',
+                    'data' :  {
+                        'api_key' : $('body').attr('data-api-key'),
+                        'status_in[0]' : 'enabled',
+                        'status_in[1]' : 'disabled',
+                        'sorted' : $(this).sortable('toArray', {'attribute':'data-id'})
+                    },
+                    'type' : 'post',
+                    'success' : function(data, textStatus, jqXHR){
+                        response = $.parseJSON(data);
+                    }
+                });
+
+            }
+        });
+    });
+</script>
+
 <ul class="breadcrumb">
     <li><a>Content</a> <span class="divider">></span></li>
     <li class="active">Feeds</li>
@@ -9,7 +37,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Id</th>
+                <th>Reorder</th>
                 <th>Name</th>
                 <th>Description</th>
                 <th>Site URL</th>
@@ -22,8 +50,8 @@
         <tbody>
         <?php if (count($this->data)>0){ ?>
         <?php foreach ($this->data as $feed){ ?>
-            <tr>
-                <td><?= $feed->id ?></td>
+            <tr data-id="<?=$feed->id?>">
+                <td><i class="icon-tasks"></i></td>
                 <td><?= $feed->name ?> <small class="muted">(<?= $feed->id ?>)</small></td>
                 <td><small><?= $feed->description ?></small></td>
                 <td><a href="<?= $feed->site_url ?>" target="_blank"><?= $feed->site_url ?></a></td>
