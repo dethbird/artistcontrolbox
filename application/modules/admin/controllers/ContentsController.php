@@ -23,10 +23,12 @@ class Admin_ContentsController extends House_Controller_Admin_Base
     
     
     public function detailsAction(){
+
+        $artist = House_Session::getArtist();
         
         if($this->getRequest()->isPost()){
             $params = $this->_getAllParams();
-            $artist = House_Session::getArtist();
+            
             $params['api_key'] = $artist->api_key;
             $params['gallery_id'] = $this->_getParam('gallery_id');
             $params['status_in'] = array("enabled", "disabled");
@@ -39,7 +41,7 @@ class Admin_ContentsController extends House_Controller_Admin_Base
                foreach($response->errors as $error){
                    $this->_messenger->addMessage(json_encode($error), "errors");
                }
-               $this->_helper->_redirector->gotoUrl("/admin/contents/details/id/".$this->_getParam('id'));
+               $this->_helper->_redirector->gotoUrl("/admin/contents/details/id/".$this->_getParam('id')."/gallery_id/".$this->_getParam('gallery_id'));
             } else {    
                 $this->_messenger->addMessage("Content saved", "success");
                 $content = $response[0];
@@ -135,7 +137,7 @@ class Admin_ContentsController extends House_Controller_Admin_Base
         }
         
         $client = new House_Http_Client();
-        $response = $client->httpGet($this->view->site_url."/api/contents", array("id"=>$this->_getParam("id"), "status_in"=>array("enabled", "disabled")));
+        $response = $client->httpGet($this->view->site_url."/api/contents", array("api_key"=>$artist->api_key, "id"=>$this->_getParam("id"), "status_in"=>array("enabled", "disabled")));
         
         //House_Log::log(json_decode($response));
         $this->view->data = json_decode($response);
@@ -147,7 +149,9 @@ class Admin_ContentsController extends House_Controller_Admin_Base
             } else {
                 //fetch the gallery name
                 $client = new House_Http_Client();
-                $response = $client->httpGet($this->view->site_url."/api/galleries", array("id"=>$this->_getParam("gallery_id"), "status_in"=>array("enabled", "disabled")));
+                $response = $client->httpGet($this->view->site_url."/api/galleries", array("api_key"=>$artist->api_key, "id"=>$this->_getParam("gallery_id"), "status_in"=>array("enabled", "disabled")));
+                //var_dump($response);
+                //exit();
                 $gallery = json_decode($response);
                 $gallery = $gallery[0];
                 $this->view->content->id = "new";
