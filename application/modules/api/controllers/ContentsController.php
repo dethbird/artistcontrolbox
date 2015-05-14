@@ -9,7 +9,7 @@ class Api_ContentsController extends House_Controller_Api_Base
     }
 
     /**
-     * 
+     *
      * @return array Array of Arists
      */
     public function indexAction()
@@ -25,7 +25,7 @@ class Api_ContentsController extends House_Controller_Api_Base
             if($this->_getParam('artist_id')==""){
                 $response->errors[] = array("field"=>"overall", "message"=>"Authentication error");
             }
-            
+
             if($this->_getParam('id')=="new" && $this->_getParam('gallery_id')==""){
                 $response->errors[] = array("field"=>"overall", "message"=>"Authentication error");
             }
@@ -35,13 +35,13 @@ class Api_ContentsController extends House_Controller_Api_Base
                 $this->getResponse()->sendResponse();
                 exit();
             }
-            
+
             if($this->_getParam('id')!=="new"){
                 $content = Content::find($this->_getParam('id'));
             } else {
                 $content = new Content();
             }
-            
+
             if(array_key_exists('name', $_POST)){
                 $content->name = $this->_getParam('name');
             }
@@ -82,17 +82,25 @@ class Api_ContentsController extends House_Controller_Api_Base
                 $content->amazon_button_html = $this->_getParam('amazon_button_html');
             }
             $content->save();
-            
+
             $this->_setParam('id', $content->id);
-            
+
             //House_Log::log($title);
         }
-        
+
         $service = new House_Service_ContentService($this->view->site_url);
         $response = $service->find($this->_getParam('id'), $this->_getParam('status_in'));
         echo json_encode($response);
-      
-      
+
+
+    }
+
+    // return all contents
+    public function allAction()
+    {
+        $service = new House_Service_ContentService($this->view->site_url);
+        $response = $service->all($this->artist);
+        echo json_encode($response);
     }
 
 
