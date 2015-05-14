@@ -29,6 +29,7 @@ class House_Service_ContentService  {
             LEFT JOIN `galleries` ON `galleries`.`id` = `contents`.`gallery_id`
             WHERE 1
             AND `galleries`.`artist_id` = ".$artist->id."
+            ORDER BY `galleries`.`sort_order` ASC, `contents`.`sort_order` ASC
         ");
 
         $response = array();
